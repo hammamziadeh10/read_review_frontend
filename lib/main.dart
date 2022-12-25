@@ -9,25 +9,35 @@ import 'package:test_build/Screens/login_screen.dart';
 
 import 'constants.dart';
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final loggedIn = await checkIfLoggedIn();
+  runApp(MyApp(loggedIn));
+}
+
+Future<bool> checkIfLoggedIn() async {
+  final storage = FlutterSecureStorage();
+  var accessToken = await storage.read(key: Constants.ACCESS_TOKEN);
+  print(accessToken);
+  return accessToken != null;
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  var loggedIn = false;
+
+  MyApp(this.loggedIn);
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (ctx) => BooksProvider(),
       child: MaterialApp(
         title: 'Flutter Demo',
-        
         theme: ThemeData(
-          //colorScheme: ColorScheme.light(),
           primarySwatch: Colors.blue,
-          
         ),
-        initialRoute: "/",
+        initialRoute: loggedIn ? GenresScreen.routeName : "/",
         routes: {
           "/": (ctx) => LoginScreen(),
           GenresScreen.routeName: (ctx) => GenresScreen(),
@@ -36,16 +46,5 @@ class MyApp extends StatelessWidget {
         },
       ),
     );
-  }
-
-  Future<bool> checkIfLoggedIn() async {
-    final storage = FlutterSecureStorage();
-    var accessToken = await storage.read(key: Constants.ACCESS_TOKEN);
-    if (accessToken == null) {
-      //goToGenresPage(context);
-      return false;
-    }else{
-      return true;
-    }
   }
 }

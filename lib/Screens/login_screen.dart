@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:test_build/Requests/user_requests.dart';
 import 'package:toast/toast.dart';
+
+import '../Requests/user_requests.dart';
 import '../Screens/genres_screen.dart';
 import '../constants.dart';
 
@@ -21,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    checkIfLoggedIn();
+    //checkIfLoggedIn();
   }
 
   @override
