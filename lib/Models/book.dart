@@ -1,10 +1,12 @@
+import 'package:test_build/Models/review.dart';
+
 class Book {
   int id;
   String name;
   String coverURL;
   String authorName;
   String genre;
-  List<dynamic> reviews;
+  List<Review> reviews;
 
   Book(
     this.id,
@@ -16,13 +18,14 @@ class Book {
   );
 
   factory Book.fromJson(Map<String, dynamic> json) {
+    Reviews reviewsObject = Reviews.fromJson(json["reviews"]);
     return Book(
       json["id"],
       json['name'],
-      json["cover_url"],
+      json["cover_url"], 
       json["author_name"],
       json["genre"],
-      json["reviews"],
+      reviewsObject.reviews,
     );
   }
 }
@@ -35,14 +38,16 @@ class Books {
   factory Books.fromJson(Map<String, dynamic> json) {
     List<dynamic> bookMaps = json["books"];
     List<Book> bookList;
+
     bookList = bookMaps.map((book) {
+      Reviews reviewsObject = Reviews.fromJson(book["reviews"]);
       return Book(
         book["id"]!,
         book["name"]!,
         book["cover_url"]!,
         book["author_name"]!,
         book["genre"]!,
-        book["reviews"]!,
+        reviewsObject.reviews,
       );
     }).toList();
     return Books(bookList);

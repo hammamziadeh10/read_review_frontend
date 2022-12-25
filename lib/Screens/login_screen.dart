@@ -13,6 +13,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   var firstPageType = FirstPageType.login;
+  bool loading = false;
 
   var usernameController = TextEditingController();
   var passwordController = TextEditingController();
@@ -122,19 +123,10 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Container(
             width: double.infinity,
             height: 50,
-            child: Center(child: Text(text))),
+            child: !loading ? Center(child: Text(text)) : const Center(child: CircularProgressIndicator())),
         onPressed: () {
-          UserRequests()
-              .login(usernameController.text, passwordController.text)
-              .onError((error, stackTrace) {
-            Toast.show("Login Failed", context,
-                duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
-            return "error";
-          }).then((value) {
-            if (value != "error") {
-              goToGenresPage(context);
-            }
-          });
+          turnLoading();
+          firstPageType == FirstPageType.login ? login() : register();
         },
         style: ElevatedButton.styleFrom(
           primary: Colors.deepPurple,
@@ -164,10 +156,45 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> checkIfLoggedIn() async {
     final storage = FlutterSecureStorage();
     var accessToken = await storage.read(key: Constants.ACCESS_TOKEN);
-    if(accessToken != null){
+    if (accessToken != null) {
       goToGenresPage(context);
     }
+  }
 
+  login() {
+    UserRequests()
+          .login(usernameController.text, passwordController.text)
+          .onError((error, stackTrace) {
+        Toast.show("Login Failed", context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM,);
+            turnLoading();
+        return "error";
+      }).then((value) {
+        if (value != "error") {
+          goToGenresPage(context);
+        }
+      });
+  }
+
+  register() {
+    UserRequests()
+          .register(usernameController.text, passwordController.text)
+          .onError((error, stackTrace) {
+        Toast.show(error.toString(), context,
+            duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+            turnLoading();
+        return "error";
+      }).then((value) {
+        if (value == "complete") {
+          login();
+        }
+      });
+  }
+
+  void turnLoading() {
+    setState(() {
+      loading = !loading;
+    });
   }
 }
 

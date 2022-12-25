@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:test_build/Models/book.dart';
 import 'package:test_build/Providers/books_provider.dart';
-// import '../providers/meals_provider.dart';
-// import '../screens/meal_screen.dart';
+import 'package:test_build/Screens/book_screen.dart';
 
 class BookItem extends StatelessWidget {
   final Book book;
@@ -16,12 +15,12 @@ class BookItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final booksProvider = Provider.of<BooksProvider>(context, listen: false);
     return GestureDetector(
-      //onTap: () => selectMeal(context),
+      onTap: () => selectBook(context),
       child: Container(
         width: 140,
         height: 200,
         decoration: BoxDecoration(
-          color: Color(0xFFEEEEEE),
+          color: const Color(0xFFEEEEEE),
           image: DecorationImage(
             fit: BoxFit.cover,
             image: Image.network(
@@ -65,8 +64,8 @@ class BookItem extends StatelessWidget {
     );
   }
 
-  // selectMeal(BuildContext ctx) {
-  //   Navigator.of(ctx)
-  //   .pushNamed(MealScreen.routeName, arguments: {"mealId": meal.id});
-  // }
+  selectBook(BuildContext ctx) {
+    Navigator.of(ctx)
+    .pushNamed(BookScreen.routeName, arguments: {"book_id": book.id});
+  }
 }
